@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\n\nui <- shinyUI(fluidPage(theme = 'bootstrap.css',\n   \n   titlePanel(\"Economic & Market Summary\"),\n   \n   sidebarLayout(\n      sidebarPanel(\n         sliderInput(\"bins\",\n                     \"Number of bins:\",\n                     min = 1,\n                     max = 50,\n                     value = 30)\n      ),\n      \n      mainPanel(\n         plotOutput(\"distPlot\")\n      )\n   )\n))\n\n\nserver <- shinyServer(function(input, output) {\n   \n   output$distPlot <- renderPlot({\n      x    <- faithful[, 2] \n      bins <- seq(min(x), max(x), length.out = input$bins + 1)\n      \n      hist(x, breaks = bins, col = 'darkgray', border = 'white')\n   })\n})\n\n\nshinyApp(ui = ui, server = server)\n\n",
+    "created" : 1510690985540.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3154613502",
+    "id" : "9A1F2645",
+    "lastKnownWriteTime" : 1510691656,
+    "last_content_update" : -2147483648,
+    "path" : "R:/David/Projects/Economic & Market Summary/Economic-Market-Summary/app.R",
+    "project_path" : "Economic-Market-Summary/app.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Test\"\noutput: \nhtml_document: \ncss: Economic-Market-Summary/www/bootstrap.css\nruntime: shiny\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(Rblpapi)\nblpConnect()\n```\n\n```{r, echo = FALSE}\n\nlibrary(magrittr)\n\nshinyApp(\n   \n   ui = fluidPage(\n      \n      fluidRow(\n         radioButtons('pdSelect', '',\n                      choices = c('1 Day'   = '1D',\n                                  '5 Day'   = '5D',\n                                  '1 Month' = '1M',\n                                  '3 Month' = '3M',\n                                  '6 Month' = '6M',\n                                  '1 Year'  = '1YR'),\n                      inline = TRUE)\n      ),\n      \n      fluidRow(\n         column(4,\n                align = 'center',\n                h2('S&P 500'),\n                textOutput(\"spx\"),\n                tags$head(tags$style(\"#spx{\n                                 color: #850237;\n                                 font-size: 30px;\n                                 font-style: bold;}\")\n                )\n         ),\n         \n         column(4,\n                align = 'center',\n                h2('Dow Jones'),\n                textOutput(\"indu\"),\n                tags$head(tags$style(\"#indu{\n                                 color: #850237;\n                                 font-size: 30px;\n                                 font-style: bold;}\")\n                )\n         ),\n         column(4,\n                align = 'center',\n                h2('NASDAQ'),\n                textOutput(\"ccmp\"),\n                tags$head(tags$style(\"#ccmp{\n                                 color: #850237;\n                                 font-size: 30px;\n                                 font-style: bold;}\")\n                )\n         )\n         \n         \n         \n      )),\n   \n   server = function(input, output) {\n      \n      \n      \n      output$spx <- renderText({\n         fld <- paste0('CHG_PCT_', input$pdSelect)\n         bdp('SPX Index',fld)[[1]] %>% \n            format(digits = 2) %>%\n            paste0('%')\n      })\n      \n      output$indu <- renderText({\n         fld <- paste0('CHG_PCT_', input$pdSelect)\n         bdp('INDU Index',fld)[[1]] %>% \n            format(digits = 2) %>%\n            paste0('%')})\n      \n      output$ccmp <- renderText({\n         fld <- paste0('CHG_PCT_', input$pdSelect)\n         bdp('CCMP Index',fld)[[1]] %>% \n            format(digits = 2) %>%\n            paste0('%')})\n   }\n   \n)\n\n```",
+    "created" : 1510692023918.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3292940788",
+    "id" : "5F733D16",
+    "lastKnownWriteTime" : 1510699723,
+    "last_content_update" : 1510699723,
+    "path" : "R:/David/Projects/Economic & Market Summary/economicMarketSummary.Rmd",
+    "project_path" : "economicMarketSummary.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
