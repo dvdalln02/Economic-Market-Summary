@@ -2,18 +2,29 @@
 title: "Test"
 output: 
 html_document: 
-css: Economic-Market-Summary/www/bootstrap.css
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
+library(stringr)
+library(shiny)
+
 library(Rblpapi)
 blpConnect()
 ```
 
 ```{r, echo = FALSE}
-shinyAppDir('Apps/index_returns')
+shinyAppDir('Apps/index_returns', 
+            options = list(height = 700))
 
 ```
+```{r, echo = FALSE}
+shinyAppDir('Apps/index_returns', 
+            options = list(height = 700))
+
+```
+
+
+
