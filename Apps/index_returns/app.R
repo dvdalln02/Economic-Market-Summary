@@ -55,8 +55,6 @@ shinyApp(
    
    server = function(input, output) {
       
-      
-      
       output$spx <- renderText({
          fld <- paste0('CHG_PCT_', input$pdSelect)
          bdp('SPX Index',fld)[[1]] %>% 
@@ -78,7 +76,3 @@ shinyApp(
    }
    
 )
-
-
-shinyApp(ui = ui, server = server)
-
