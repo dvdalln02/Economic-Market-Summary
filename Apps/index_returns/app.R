@@ -1,4 +1,8 @@
-source('R:/David/Projects/Economic & Market Summary/Apps/index_returns/LeadersLaggards.R')
+path <- 'R:/David/Projects/Economic & Market Summary/Apps/index_returns'
+
+source(paste0(path, '/LeadersLaggards.R'))
+source(paste0(path, '/PdRet.R'))
+
 
 library(shiny)
 library(shinyjs)
@@ -9,6 +13,7 @@ shinyApp(
       
       shinyjs::useShinyjs(),
       
+# Index Returns UI ---------------------------------------------------
       fluidRow(
          radioButtons('pdSelect', '',
                       choices = c('1 Day'   = '1D',
@@ -60,41 +65,95 @@ shinyApp(
          
       ),
       fluidRow(
-         actionButton('leadersLaggards',label = NULL,
+         actionButton('leadersLaggardsOff',label = NULL,
                       icon = icon('list'),
                       style = "color: white; 
-                               background-color: #850237")
+                               background-color: #850237"),
+         
+         hidden(actionButton('leadersLaggardsOn', label = NULL,
+                             icon = icon('list'),
+                             style = "color: #850237;
+                                       background-color: white"))
          
       ),
-         fluidRow(
-            column(4,
-                   align = 'center',
-                   hidden(h3(id = 'spx-lead','Leaders')),
-                   hidden(tableOutput('spxTop')),
-                   hidden(h3(id = 'spx-lag', 'Laggards')),
-                   hidden(tableOutput('spxBtm'))),
-            
-            column(4,
-                   align = 'center',
-                   hidden(h3(id = 'indu-lead', 'Leaders')),
-                   hidden(tableOutput('induTop')),
-                   hidden(h3(id = 'indu-lag', 'Laggards')),
-                   hidden(tableOutput('induBtm'))),
-            
-            column(4,
-                   align = 'center',
-                   hidden(h3(id = 'ccmp-lead', 'Leaders')),
-                   hidden(tableOutput('ccmpTop')),
-                   hidden(h3(id = 'ccmp-lag', 'Laggards')),
-                   hidden(tableOutput('ccmpBtm')))
-         )
+      
+      br(),
 
-),
+      fluidRow(
+         hidden(radioButtons('leadLagCount', 
+                             label = 'Number of Leaders/Laggards',
+                             choices = list(5,10,20),
+                             inline = TRUE)
+                
+         )),
+      
+      fluidRow(
+         column(4,
+                align = 'center',
+                hidden(h3(id = 'spx-lead','Leaders')),
+                hidden(tableOutput('spxTop')),
+                hidden(h3(id = 'spx-lag', 'Laggards')),
+                hidden(tableOutput('spxBtm'))),
+         
+         column(4,
+                align = 'center',
+                hidden(h3(id = 'indu-lead', 'Leaders')),
+                hidden(tableOutput('induTop')),
+                hidden(h3(id = 'indu-lag', 'Laggards')),
+                hidden(tableOutput('induBtm'))),
+         
+         column(4,
+                align = 'center',
+                hidden(h3(id = 'ccmp-lead', 'Leaders')),
+                hidden(tableOutput('ccmpTop')),
+                hidden(h3(id = 'ccmp-lag', 'Laggards')),
+                hidden(tableOutput('ccmpBtm')))
+      )
+      
+   ),
    
    server = function(input, output) {
+ 
+# Index Period Returns -----------------------------------------------    
       
-      observeEvent(input$leadersLaggards,{
+      # Display index return for selected period
+      output$spx  <- renderText({PdRet('SPX',  input$pdSelect)})
+      output$indu <- renderText({PdRet('INDU', input$pdSelect)})
+      output$ccmp <- renderText({PdRet('CCMP', input$pdSelect)})
       
+# Leaders/Laggards ---------------------------------------------------  
+
+      # Toggle UI elements on actionButton 
+      observeEvent(input$leadersLaggardsOff,{
+         
+         toggle('leadersLaggardsOn')
+         toggle('leadersLaggardsOff')
+         
+         toggle('leadLagCount')
+         
+         toggle('spx-lead')
+         toggle('spxTop')
+         toggle('spx-lag')
+         toggle('spxBtm')
+         
+         toggle('indu-lead')
+         toggle('induTop')
+         toggle('indu-lag')
+         toggle('induBtm')
+         
+         toggle('ccmp-lead')
+         toggle('ccmpTop')
+         toggle('ccmp-lag')
+         toggle('ccmpBtm')
+         
+      })
+      
+      observeEvent(input$leadersLaggardsOn, {
+         toggle('leadersLaggardsOn')
+         toggle('leadersLaggardsOff')
+         
+         toggle('leadLagCount')
+         
          toggle('spx-lead')
          toggle('spxTop')
          toggle('spx-lag')
@@ -111,47 +170,41 @@ shinyApp(
          toggle('ccmpBtm')
       })
       
-      spxll  <- reactive({LeadersLaggards('SPX', input$pdSelect)})
+      # Determine index leaders and laggards based on selected period
+      spxll  <- reactive({LeadersLaggards('SPX' , input$pdSelect)})
       indull <- reactive({LeadersLaggards('INDU', input$pdSelect)})
       ccmpll <- reactive({LeadersLaggards('CCMP', input$pdSelect)})
       
-      output$spx <- renderText({
-         fld <- paste0('CHG_PCT_', input$pdSelect)
-         bdp('SPX Index',fld)[[1]] %>% 
-            format(digits = 2) %>%
-            paste0('%')
-      })
+      # Display selected number of index leaders and laggards
+      output$spxTop  <- renderTable({
+         head(spxll()$leaders, as.numeric(input$leadLagCount))},
+         colnames = FALSE)
       
-      output$indu <- renderText({
-         fld <- paste0('CHG_PCT_', input$pdSelect)
-         bdp('INDU Index',fld)[[1]] %>% 
-            format(digits = 2) %>%
-            paste0('%')})
+      output$induTop <- renderTable({
+         head(indull()$leaders, as.numeric(input$leadLagCount))}, 
+         colnames = FALSE)
       
-      output$ccmp <- renderText({
-         fld <- paste0('CHG_PCT_', input$pdSelect)
-         bdp('CCMP Index',fld)[[1]] %>% 
-            format(digits = 2) %>%
-            paste0('%')})
+      output$ccmpTop <- renderTable({
+         head(ccmpll()$leaders, as.numeric(input$leadLagCount))}, 
+         colnames = FALSE)
       
-#####################################################################
-      output$spxTop  <- renderTable({spxll()$leaders},
-                                    colnames = FALSE)
-      output$induTop <- renderTable({indull()$leaders},
-                                    colnames = FALSE)
-      output$ccmpTop <- renderTable({ccmpll()$leaders},
-                                    colnames = FALSE)
+      output$spxBtm  <- renderTable({
+         head(spxll()$laggards, as.numeric(input$leadLagCount))},
+         colnames = FALSE)
       
-      output$spxBtm  <- renderTable({spxll()$laggards},
-                                    colnames = FALSE)
-      output$induBtm <- renderTable({indull()$laggards},
-                                    colnames = FALSE)
-      output$ccmpBtm <- renderTable({ccmpll()$laggards},
-                                    colnames = FALSE)
+      output$induBtm <- renderTable({
+         head(indull()$laggards, as.numeric(input$leadLagCount))},
+         colnames = FALSE)
       
-
+      output$ccmpBtm <- renderTable({
+         head(ccmpll()$laggards, as.numeric(input$leadLagCount))},
+         colnames = FALSE)
    },
-
+   
+   
 options = list(height = '1000px')
    
 )
+
+
+

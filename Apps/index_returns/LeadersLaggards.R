@@ -1,23 +1,22 @@
 LeadersLaggards <- function(index, period){
-   index <- paste(index, 'Index')
-   fld <- paste0('CHG_PCT_', period)
    
-   members <- bds(index, 'INDX_MEMBERS')
-   members <- paste(members[,1], 'Equity')
+   library(stringr)
    
-   returns <- bdp(members, fld)
+   load('R:/David/Projects/Economic & Market Summary/Data/dat.RData')
+   
+   full.returns <- dat$member.returns[[index]]
+   returns <- full.returns[,period]
+   
    names(returns) <- 'return'
-   returns$tick <- word(row.names(returns))
+   returns <- data.frame(tick = word(row.names(full.returns)),
+                                     returns = returns)
+   
    returns <- returns[order(returns$return, decreasing = TRUE),]
-   row.names(returns) <- NULL
-   returns <- data.frame(tick   = returns$tick, 
-                         return = returns$return)
    
    
-   lead <- head(returns, 5)
+   lead <- returns
    
-   lag <- returns[order(returns$return),] %>%
-      head(5)
+   lag <- returns[order(returns$return),]
    
    topBtm <- list(leaders = lead,
                   laggards = lag)

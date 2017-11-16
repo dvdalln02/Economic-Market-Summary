@@ -11,8 +11,6 @@ library(magrittr)
 library(stringr)
 library(shiny)
 
-library(Rblpapi)
-blpConnect()
 ```
 
 ```{r, echo = FALSE}
@@ -20,11 +18,7 @@ shinyAppDir('Apps/index_returns',
             options = list(height = 700))
 
 ```
-```{r, echo = FALSE}
-shinyAppDir('Apps/index_returns', 
-            options = list(height = 700))
 
-```
 
 
 
