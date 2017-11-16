@@ -13,7 +13,7 @@ shinyApp(
       
       shinyjs::useShinyjs(),
       
-# Index Returns UI ---------------------------------------------------
+      # Index Returns UI ---------------------------------------------------
       fluidRow(
          radioButtons('pdSelect', '',
                       choices = c('1 Day'   = '1D',
@@ -65,20 +65,39 @@ shinyApp(
          
       ),
       fluidRow(
-         actionButton('leadersLaggardsOff',label = NULL,
-                      icon = icon('list'),
-                      style = "color: white; 
-                               background-color: #850237"),
+         # Action Buttons On/Off -----------------------------------------------         
          
-         hidden(actionButton('leadersLaggardsOn', label = NULL,
+         # Leaders/laggards buttons
+         column(6,
+                actionButton('leadersLaggardsOff',label = NULL,
                              icon = icon('list'),
-                             style = "color: #850237;
+                             style = "color: white; 
+                               background-color: #850237"),
+                
+                
+                hidden(actionButton('leadersLaggardsOn', label = NULL,
+                                    icon = icon('list'),
+                                    style = "color: #850237;
                                        background-color: white"))
+         ),
+         
+         # Index group returns buttons on/off
+         column(6,
+                actionButton('groupReturnsOff',label = NULL,
+                             icon = icon('bar-chart'),
+                             style = "color: white; 
+                             background-color: #850237"),
+                
+                
+                hidden(actionButton('groupReturnsOn', label = NULL,
+                                    icon = icon('bar-chart'),
+                                    style = "color: #850237;
+                                    background-color: white")))
          
       ),
       
       br(),
-
+      
       fluidRow(
          hidden(radioButtons('leadLagCount', 
                              label = 'Number of Leaders/Laggards',
@@ -113,16 +132,16 @@ shinyApp(
    ),
    
    server = function(input, output) {
- 
-# Index Period Returns -----------------------------------------------    
+      
+      # Index Period Returns -----------------------------------------------    
       
       # Display index return for selected period
       output$spx  <- renderText({PdRet('SPX',  input$pdSelect)})
       output$indu <- renderText({PdRet('INDU', input$pdSelect)})
       output$ccmp <- renderText({PdRet('CCMP', input$pdSelect)})
       
-# Leaders/Laggards ---------------------------------------------------  
-
+      # Leaders/Laggards ---------------------------------------------------  
+      
       # Toggle UI elements on actionButton 
       observeEvent(input$leadersLaggardsOff,{
          
@@ -199,10 +218,39 @@ shinyApp(
       output$ccmpBtm <- renderTable({
          head(ccmpll()$laggards, as.numeric(input$leadLagCount))},
          colnames = FALSE)
+      
+      
+      
+      # Index Group Returns -------------------------------------------
+      
+      # Toggle UI elements on actionButton 
+      observeEvent(input$groupReturnsOff,{
+         
+         toggle('groupReturnsOn')
+         toggle('groupReturnsOff')
+         
+         toggle('leadLagCount')
+         
+         toggle('spx-lead')
+         toggle('spxTop')
+         toggle('spx-lag')
+         toggle('spxBtm')
+         
+         toggle('indu-lead')
+         toggle('induTop')
+         toggle('indu-lag')
+         toggle('induBtm')
+         
+         toggle('ccmp-lead')
+         toggle('ccmpTop')
+         toggle('ccmp-lag')
+         toggle('ccmpBtm')
+         
+      })
    },
    
    
-options = list(height = '1000px')
+   options = list(height = '1000px')
    
 )
 
