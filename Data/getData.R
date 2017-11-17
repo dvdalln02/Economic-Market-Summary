@@ -19,3 +19,4 @@ dat <- list()
 
 source('getData_indexReturns.R')
 source('getData_memberReturns.R')
+source('getData_groupReturns.R')

@@ -133,14 +133,14 @@ shinyApp(
    
    server = function(input, output) {
       
-      # Index Period Returns -----------------------------------------------    
+      # Index Period Returns -----------------------------------------    
       
       # Display index return for selected period
       output$spx  <- renderText({PdRet('SPX',  input$pdSelect)})
       output$indu <- renderText({PdRet('INDU', input$pdSelect)})
       output$ccmp <- renderText({PdRet('CCMP', input$pdSelect)})
       
-      # Leaders/Laggards ---------------------------------------------------  
+      # Leaders/Laggards ---------------------------------------------  
       
       # Toggle UI elements on actionButton 
       observeEvent(input$leadersLaggardsOff,{
@@ -221,7 +221,7 @@ shinyApp(
       
       
       
-      # Index Group Returns -------------------------------------------
+      # Index Group Returns ------------------------------------------
       
       # Toggle UI elements on actionButton 
       observeEvent(input$groupReturnsOff,{
@@ -229,23 +229,11 @@ shinyApp(
          toggle('groupReturnsOn')
          toggle('groupReturnsOff')
          
-         toggle('leadLagCount')
-         
-         toggle('spx-lead')
-         toggle('spxTop')
-         toggle('spx-lag')
-         toggle('spxBtm')
-         
-         toggle('indu-lead')
-         toggle('induTop')
-         toggle('indu-lag')
-         toggle('induBtm')
-         
-         toggle('ccmp-lead')
-         toggle('ccmpTop')
-         toggle('ccmp-lag')
-         toggle('ccmpBtm')
-         
+      })
+      
+      observeEvent(input$groupReturnsOn, {
+         toggle('groupReturnsOn')
+         toggle('groupReturnsOff')
       })
    },
    
